@@ -16,5 +16,7 @@ courses they can tutor and when they're available <br>
 
 ## Link to the prototype
 <p>
-  https://www.figma.com/proto/Vlrcc2jsmar1VDT6aEywBo/FindTutor---Prototype?node-id=8-2&p=f&t=rfUrOnghULXVuYHh-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=8%3A2
+  This is the link to the FindTutor prototype. <br>
+  Interactable buttons will highlighted when you click outside the interactable buttons. <br>
+  https://www.figma.com/proto/Vlrcc2jsmar1VDT6aEywBo/FindTutor---Prototype?node-id=8-2&p=f&t=rfUrOnghULXVuYHh-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=8%3A2 <br>
 </p>
