@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FindTutor Prototype</title>
+<style>
+  :root {
+    --bg: #131923;
+    --nav: #0b0f17;
+    --panel: #2a3447;
+    --surface: #1b2130;
+    --deep: #0b0f17;
+    --line: #3a4357;
+    --text: #ffffff;
+    --muted: #a9b2c3;
+    --brand: #4f6bff;
+    --brand-ink: #0b1020;
+    --accent: #4fb3e8;
+    --star: #ffd75e;
+    --green: #3ddc6f;
+    --link: #7fb069;
+    --danger: #ff2d55;
+    --warn: #f5b942;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Figtree", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  h1, h2, h3 { letter-spacing: -0.02em; margin: 0; }
+  button { font: inherit; cursor: pointer; }
+  a { color: inherit; }
+
+  /* ---------- Header ---------- */
+  header {
+    background: var(--nav); border-bottom: 2px solid #3a4050;
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .logo { display: flex; align-items: center; gap: 14px; background: none; border: 0; color: #fff; padding: 0; }
+  .logo-mark {
+    width: 44px; height: 44px; border-radius: 12px; background: var(--brand);
+    display: flex; flex-direction: column; justify-content: center; gap: 6px; padding-left: 10px;
+  }
+  .logo-mark i { display: block; height: 5px; border-radius: 3px; background: #e9edff; }
+  .logo-mark i:first-child { width: 24px; }
+  .logo-mark i:last-child { width: 14px; }
+  .logo-text { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; }
+  .navlinks { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .navlinks .link {
+    background: none; border: 0; color: var(--muted); padding: 8px 14px; border-radius: 12px; font-size: 1.02rem;
+  }
+  .navlinks .link:hover { color: #fff; }
+  .navlinks .link.active { color: #fff; background: #1b2130; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    border: 0; border-radius: 16px; padding: 13px 24px; font-weight: 700; font-size: 1.02rem;
+    background: var(--brand); color: var(--brand-ink); transition: filter .15s, transform .05s;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: translateY(1px); }
+  .btn.dark { background: var(--panel); color: #fff; }
+  .btn.danger { background: var(--danger); color: #1b0610; }
+  .btn.sm { padding: 8px 16px; font-size: .92rem; border-radius: 12px; }
+  .btn.block { width: 100%; padding: 16px; font-size: 1.1rem; border-radius: 20px; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 1180px; margin: 0 auto; padding: 36px 32px 20px; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: 1.05rem; margin-bottom: 12px; }
+  .page-title { font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 700; }
+  .lead { color: var(--muted); font-size: 1.1rem; max-width: 520px; }
+  .muted { color: var(--muted); }
+
+  /* ---------- Hero ---------- */
+  .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 30px; align-items: center; padding: 10px 0 40px; }
+  .hero h1 { font-size: clamp(2.6rem, 6.4vw, 5.2rem); line-height: 1.12; font-weight: 700; }
+  .hero h1 .blue { color: var(--brand); display: block; }
+  .hero .lead { margin: 26px 0 30px; }
+  .hero-btns { display: flex; gap: 18px; flex-wrap: wrap; }
+  .hero-btns .btn { padding: 18px 30px; font-size: 1.15rem; border-radius: 18px; }
+  .features { display: flex; gap: 34px; margin-top: 44px; flex-wrap: wrap; }
+  .features b { font-size: 1.25rem; display: block; }
+  .features span { color: var(--muted); }
+  .orbit { position: relative; width: 100%; max-width: 500px; aspect-ratio: 1; margin: 0 auto; }
+  .ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 1px solid #2c3550; }
+  .ring.r1 { width: 100%; height: 100%; border-color: #4f6bff; }
+  .ring.r2 { width: 74%; height: 74%; border-color: #333d57; }
+  .ring.r3 { width: 50%; height: 50%; border-color: #333d57; }
+  .hero-card {
+    position: absolute; top: 50%; left: 50%; width: 44%; aspect-ratio: .88;
+    transform: translate(-50%, -50%) rotate(-8deg); border-radius: 22px;
+    background: linear-gradient(160deg, #1fd8e8 0%, #5b8def 50%, #9b5cf6 100%);
+    color: #0b1020; padding: 16% 12%; font-weight: 800; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .hero-card .t { text-transform: uppercase; font-size: clamp(.8rem, 1.7vw, 1.15rem); line-height: 1.25; }
+  .hero-card .s { font-size: clamp(.95rem, 2vw, 1.3rem); }
+  .float {
+    position: absolute; background: var(--panel); border-radius: 14px; padding: 10px 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3); font-size: .95rem;
+  }
+  .float b { display: block; }
+  .float span { color: var(--muted); }
+  .float.f1 { top: 22%; left: -6%; }
+  .float.f2 { bottom: 12%; right: -4%; }
+
+  /* ---------- How it works ---------- */
+  .section { padding: 50px 0 10px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 30px; }
+  .step { background: var(--surface); border-radius: 22px; padding: 28px; }
+  .step .n {
+    width: 52px; height: 52px; border-radius: 16px; background: var(--brand); color: var(--brand-ink);
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; margin-bottom: 26px;
+  }
+  .step h3 { font-size: 1.4rem; margin-bottom: 8px; }
+  .step p { margin: 0; color: var(--muted); }
+  .cta {
+    margin-top: 44px; border: 1.5px solid #3a4560; border-radius: 26px; padding: 32px 36px;
+    background: linear-gradient(90deg, #171d2b, #1e2331);
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .cta h2 { font-size: 2.1rem; margin-bottom: 4px; }
+
+  /* ---------- Search ---------- */
+  .find-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .searchbar {
+    background: var(--surface); border-radius: 22px; padding: 18px; margin: 22px 0 14px;
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+  }
+  .searchbar .grow { flex: 1 1 280px; }
+  .searchbar .btn { padding: 15px 28px; border-radius: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 16px; }
+  .tcard { background: var(--panel); border-radius: 24px; padding: 22px; }
+  .tcard-top { display: flex; gap: 18px; align-items: center; }
+  .avatar-sq {
+    width: 84px; height: 84px; flex: none; border-radius: 20px; background: #aab3c5; color: #6b7487;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.6rem;
+  }
+  .tcard h3 { font-size: 1.25rem; margin-bottom: 2px; }
+  .rating { color: var(--star); font-size: 1.05rem; white-space: nowrap; }
+  .rating .off { color: #596277; }
+  .rating small { color: var(--muted); font-size: .85rem; }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--link); text-decoration: underline; font-size: 1.05rem; }
+  .linkbtn.light { color: #c7cfdf; }
+  .infobox { background: var(--deep); border-radius: 16px; padding: 14px 16px; margin-top: 18px; }
+  .infobox p { margin: 0 0 4px; }
+  .infobox .linkbtn { margin-top: 14px; display: inline-block; }
+  .empty { grid-column: 1 / -1; background: var(--surface); border-radius: 20px; padding: 36px; text-align: center; color: var(--muted); }
+
+  /* ---------- Tutor profile ---------- */
+  .back { margin-bottom: 16px; }
+  .profile { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
+  .pside { background: var(--panel); border-radius: 26px; overflow: hidden; text-align: center; }
+  .pside .top { padding: 34px 24px 26px; border-bottom: 3px solid var(--bg); }
+  .pside .avatar-lg {
+    width: 150px; height: 150px; margin: 0 auto 18px; border-radius: 26px; background: #aab3c5; color: #3b485e;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 3rem;
+  }
+  .pside .name { font-size: 1.7rem; color: #cfd6e6; font-weight: 600; }
+  .pside .bottom { padding: 28px 24px 34px; }
+  .pside .rating { font-size: 1.9rem; margin-bottom: 4px; }
+  .pside .btn { margin-top: 22px; padding: 16px 30px; border-radius: 18px; }
+  .pmain { background: var(--deep); border-radius: 26px; padding: 28px 32px 34px; }
+  .pmain .k { color: #7d879b; font-size: 1.25rem; }
+  .avail-on { color: var(--green); text-decoration: underline; font-size: 1.25rem; }
+  .avail-off { color: #7d879b; font-size: 1.25rem; }
+  .pmain ul { font-size: 1.35rem; margin: 10px 0 0; padding-left: 28px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px 18px; border-bottom: 2px solid #e8ecf5; margin-top: 34px; padding: 0 4px 6px; }
+  .tab { background: none; border: 0; color: #fff; font-size: 1.15rem; padding: 4px 2px; border-bottom: 3px solid transparent; }
+  .tab.dim { color: #6d778b; }
+  .tab.active { border-bottom-color: var(--brand); font-weight: 700; }
+  .slots { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 4px; min-height: 40px; }
+  .slot { background: #16301f; color: var(--green); border-radius: 999px; padding: 6px 16px; font-weight: 600; }
+  .desc-title { font-size: 1.2rem; margin: 26px 0 8px; }
+  .desc { color: #d3d9e6; font-size: 1.08rem; margin: 0; }
+  .reviews { background: var(--surface); border-radius: 26px; padding: 26px 30px; margin-top: 24px; }
+  .reviews h2 { font-size: 1.5rem; margin-bottom: 8px; }
+  .review { border-top: 1px solid #2c3550; padding: 14px 0; }
+  .review:first-of-type { border-top: 0; }
+
+  /* ---------- Dashboard & requests ---------- */
+  .stack { display: grid; gap: 18px; margin-top: 22px; }
+  .rcard { background: var(--panel); border-radius: 22px; padding: 22px 24px; }
+  .rhead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  .rhead h3 { font-size: 1.25rem; }
+  .meta { color: var(--muted); margin-top: 2px; }
+  .quote { background: var(--deep); border-radius: 14px; padding: 12px 16px; margin: 14px 0 0; }
+  .pill { border-radius: 999px; padding: 3px 14px; font-size: .85rem; font-weight: 700; text-transform: capitalize; }
+  .pill.pending { background: #3b2f12; color: var(--warn); }
+  .pill.accepted { background: #1b2a5c; color: #8ea2ff; }
+  .pill.completed { background: #14301f; color: var(--green); }
+  .pill.declined { background: #3d1420; color: #ff7b95; }
+  .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .sectionhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+  .sectionhead h2 { font-size: 1.6rem; }
+  .viewing { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .95rem; }
+  .viewing select { width: auto; padding: 8px 36px 8px 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { background: #232c42; border-radius: 999px; padding: 4px 14px; font-size: .92rem; display: inline-flex; gap: 8px; align-items: center; }
+  .chip.g { background: #16301f; color: var(--green); }
+  .chip button { background: none; border: 0; color: inherit; font-size: 1.1rem; line-height: 1; padding: 0; }
+  .prof-sum { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .prof-sum .avatar-sq { width: 72px; height: 72px; font-size: 1.4rem; }
+
+  /* ---------- Form fields ---------- */
+  label { display: block; margin: 16px 0 6px 6px; color: #e3e8f3; }
+  input, select, textarea {
+    width: 100%; font: inherit; color: #fff; background: var(--deep); border: 1.5px solid var(--line);
+    border-radius: 999px; padding: 15px 22px; outline: none;
+  }
+  input::placeholder, textarea::placeholder { color: #667088; }
+  input:focus, select:focus, textarea:focus { border-color: var(--brand); }
+  textarea { border-radius: 22px; min-height: 90px; resize: vertical; }
+  select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #aab3c5 50%), linear-gradient(135deg, #aab3c5 50%, transparent 50%);
+    background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 40px; }
+  input[type=time] { color-scheme: dark; }
+  .searchbar input, .searchbar select { width: auto; }
+  .searchbar input.grow { width: 100%; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .row > * { flex: 1 1 100px; }
+  .row .btn { flex: 0 0 auto; }
+
+  /* ---------- Modal ---------- */
+  #overlay {
+    position: fixed; inset: 0; background: rgba(5, 8, 14, .72); display: none;
+    align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto; z-index: 20;
+  }
+  #overlay.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 540px; background: #1c2230; border: 1px solid #4a5268; border-radius: 26px; padding: 30px 32px 34px;
+  }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h2 { font-size: 1.7rem; }
+  .x { background: none; border: 0; color: #cfd6e6; font-size: 1.8rem; line-height: 1; }
+  .msub { color: #cfd6e6; margin: 6px 0 4px; font-size: 1.1rem; }
+  .modal .btn.block { margin-top: 28px; }
+  .starpick { display: flex; gap: 6px; margin: 6px 0 0 6px; }
+  .starpick button { background: none; border: 0; font-size: 2.2rem; color: #596277; padding: 0; line-height: 1; }
+  .starpick button.on { color: var(--star); }
+
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #eef1fa; color: #0b1020;
+    padding: 12px 22px; border-radius: 14px; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: opacity .25s; max-width: 90vw; text-align: center; z-index: 40;
+  }
+  #toast.show { opacity: 1; }
+  footer { text-align: center; color: #6d778b; font-size: .85rem; padding: 24px 20px 36px; }
+
+  @media (max-width: 900px) {
+    .hero, .profile { grid-template-columns: 1fr; }
+    .grid, .steps { grid-template-columns: 1fr; }
+    header { padding: 12px 18px; }
+    main { padding: 24px 18px; }
+    .orbit { max-width: 380px; }
+    .float.f1 { left: 0; } .float.f2 { right: 0; }
+  }
+  @media (min-width: 901px) and (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="logo" data-action="go" data-page="home" aria-label="FindTutor home">
+    <span class="logo-mark"><i></i><i></i></span>
+    <span class="logo-text">FindTutor</span>
+  </button>
+  <div class="navlinks" id="navlinks"></div>
+</header>
+
+<main id="app"></main>
+<footer>FindTutor prototype · demo data held in the browser, refresh to reset</footer>
+
+<div id="overlay"><div class="modal" id="modal"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ======================= Data ======================= */
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_FULL = { Sun: 'Sunday', Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday' };
+
+const state = {
+  page: 'home',          // home | find | profile | requests | dash
+  profileId: null,
+  profileDay: null,
+  find: { subject: '', day: '', time: '' },
+  modal: null,           // { type: 'tutor' | 'request' | 'review', ... }
+  myTutorId: null,       // set once the user creates a tutor profile
+  dashTutor: 't1',       // demo: whose incoming requests are shown
+  userName: '',
+  nextId: 100,
+  tutors: [
+    { id: 't1', name: 'Maya Chen',
+      bio: 'Fourth-year computer science student. I like breaking hard problems down step by step and I always bring practice questions.',
+      courses: ['Mathematics', 'Physics', 'Programming'],
+      slots: [ {day:'Mon', start:'16:00', end:'18:00'}, {day:'Wed', start:'17:00', end:'19:00'}, {day:'Sat', start:'10:00', end:'12:00'} ] },
+    { id: 't2', name: 'Daniel Okafor',
+      bio: 'Biology and chemistry teaching assistant. Happy to help with lab reports, exam prep and study plans.',
+      courses: ['Biology', 'Chemistry'],
+      slots: [ {day:'Tue', start:'18:00', end:'20:00'}, {day:'Thu', start:'18:00', end:'20:00'}, {day:'Sun', start:'14:00', end:'17:00'} ] },
+    { id: 't3', name: 'Priya Nair',
+      bio: 'Math major. I focus on building intuition before formulas, and I love essay feedback sessions too.',
+      courses: ['Mathematics', 'English', 'Statistics'],
+      slots: [ {day:'Mon', start:'10:00', end:'12:00'}, {day:'Fri', start:'15:00', end:'18:00'}, {day:'Sat', start:'13:00', end:'15:00'} ] }
+  ],
+  reviews: [
+    { id: 'v1', tutorId: 't1', author: 'Sam', rating: 5, course: 'Programming', comment: 'Explained recursion so clearly. Super patient.' },
+    { id: 'v2', tutorId: 't1', author: 'Noor', rating: 4, course: 'Mathematics', comment: 'Great session, helped me finally understand limits.' },
+    { id: 'v3', tutorId: 't2', author: 'Lee', rating: 5, course: 'Biology', comment: 'Helped me plan my whole revision schedule.' },
+    { id: 'v4', tutorId: 't3', author: 'Mia', rating: 4, course: 'Mathematics', comment: 'Good examples for proofs by induction.' }
+  ],
+  requests: [
+    { id: 'r1', tutorId: 't1', student: 'Jamie Lee', subject: 'Mathematics', slot: {day:'Mon', start:'16:00', end:'18:00'},
+      mode: 'Online', location: 'Zoom', message: '', status: 'pending', reviewed: false, mine: false },
+    { id: 'r2', tutorId: 't3', student: 'Alex', subject: 'English', slot: {day:'Sat', start:'13:00', end:'15:00'},
+      mode: 'In-person', location: 'Library, 2nd floor', message: '', status: 'completed', reviewed: false, mine: true }
+  ]
+};
+
+/* ======================= Helpers ======================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const getTutor = id => state.tutors.find(t => t.id === id);
+const initials = n => n.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const sortSlots = slots => slots.slice().sort((a, b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || a.start.localeCompare(b.start));
+const slotText = s => `${DAY_FULL[s.day]}, ${s.start}–${s.end}`;
+const availDays = t => DAYS.filter(d => t.slots.some(s => s.day === d)).join(', ');
+const tutorReviews = id => state.reviews.filter(r => r.tutorId === id);
+const allCourses = () => [...new Set(state.tutors.flatMap(t => t.courses))].sort();
+
+function avg(id) {
+  const rs = tutorReviews(id);
+  return rs.length ? rs.reduce((a, r) => a + r.rating, 0) / rs.length : null;
+}
+function starsHtml(n) {
+  const full = Math.round(n || 0);
+  return Array.from({ length: 5 }, (_, i) => `<span class="${i < full ? '' : 'off'}">★</span>`).join('');
+}
+function ratingHtml(id, withCount) {
+  const a = avg(id);
+  if (a === null) return `<span class="rating"><span class="off">★★★★★</span> <small>No reviews yet</small></span>`;
+  return `<span class="rating">${starsHtml(a)} ${withCount ? `<small>${a.toFixed(1)} (${tutorReviews(id).length})</small>` : ''}</span>`;
+}
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* ======================= Header ======================= */
+function renderHeader() {
+  const link = (page, label, scroll) =>
+    `<button class="link ${state.page === page && !scroll ? 'active' : ''}" data-action="go" data-page="${page}"${scroll ? ` data-scroll="${scroll}"` : ''}>${label}</button>`;
+  $('#navlinks').innerHTML =
+    link('find', 'Find a tutor') +
+    link('home', 'How it works', 'how') +
+    link('requests', 'My requests') +
+    link('dash', 'Tutor dashboard') +
+    (state.myTutorId ? '' : `<button class="btn" data-action="openTutorModal">Become a tutor</button>`);
+}
+
+/* ======================= Pages ======================= */
+function pageHome() {
+  return `
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Learn from each other</div>
+        <h1>Find your people.<span class="blue">Learn anything.</span></h1>
+        <p class="lead">A student-powered tutoring community. Find a tutor who gets your course, your schedule, and the way you learn best.</p>
+        <div class="hero-btns">
+          <button class="btn" data-action="go" data-page="find">Find a tutor ↗</button>
+          <button class="btn dark" data-action="openTutorModal">Become a tutor</button>
+        </div>
+        <div class="features">
+          <div><b>Peer-to-peer</b><span>Student community</span></div>
+          <div><b>Flexible</b><span>Online or in-person</span></div>
+          <div><b>Your schedule</b><span>Learn at your pace</span></div>
+        </div>
+      </div>
+      <div class="orbit" aria-hidden="true">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="float f1"><b>▪ Study smarter</b><span>One session at a time</span></div>
+        <div class="hero-card"><div class="t">Your next chapter</div><div style="font-size:1.6rem">✦</div><div class="s">Starts here.</div></div>
+        <div class="float f2"><b>▪ Student tutors</b><span>Learn from a peer</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="eyebrow">Simple by design</div>
+      <h1 class="page-title">How FindTutor works</h1>
+      <p class="muted" style="font-size:1.1rem;margin-top:10px">Search by subject and find a match that works for you.</p>
+      <div class="steps">
+        <div class="step"><div class="n">01</div><h3>Find your match</h3><p>Browse student profiles, compare subjects, and filter by day and time.</p></div>
+        <div class="step"><div class="n">02</div><h3>Send a request</h3><p>Tell a tutor what you need help with and suggest a time that suits you.</p></div>
+        <div class="step"><div class="n">03</div><h3>Learn together</h3><p>Meet online or in person, then leave a review to help other students.</p></div>
+      </div>
+      <div class="cta">
+        <div><h2>Got a subject you love?</h2><p class="muted" style="margin:0">Share what you know and help another student succeed.</p></div>
+        <button class="btn" data-action="openTutorModal" style="padding:18px 30px;border-radius:18px">Create tutor profile ↗</button>
+      </div>
+    </section>`;
+}
+
+/* ---- FR-2: Find tutors ---- */
+function matches(t) {
+  const { subject, day, time } = state.find;
+  const q = subject.trim().toLowerCase();
+  if (q && !t.courses.some(c => c.toLowerCase().includes(q))) return false;
+  if (day || time) {
+    const ok = t.slots.some(s => (!day || s.day === day) && (!time || (s.start <= time && time < s.end)));
+    if (!ok) return false;
+  }
+  return true;
+}
+function tutorCardHtml(t) {
+  return `
+    <div class="tcard">
+      <div class="tcard-top">
+        <div class="avatar-sq">${esc(initials(t.name))}</div>
+        <div>
+          <h3>${esc(t.name)}</h3>
+          ${ratingHtml(t.id, false)}<br>
+          <button class="linkbtn" data-action="viewTutor" data-id="${t.id}" data-scroll="reviews">See Reviews</button>
+        </div>
+      </div>
+      <div class="infobox">
+        <p>Courses : ${esc(t.courses.join(', '))}</p>
+        <p>Availability : ${esc(availDays(t))}</p>
+        <button class="linkbtn light" data-action="viewTutor" data-id="${t.id}">View full profile</button>
+      </div>
+    </div>`;
+}
+function resultsHtml() {
+  const list = state.tutors.filter(matches);
+  return list.length ? list.map(tutorCardHtml).join('')
+    : '<div class="empty">No tutors match those filters. Try a different subject, day or time.</div>';
+}
+function updateResults() {
+  const n = state.tutors.filter(matches).length;
+  $('#results').innerHTML = resultsHtml();
+  $('#found').textContent = `${n} profile(s) found.`;
+  $('#count').textContent = `${state.tutors.length} tutors`;
+}
+function pageFind() {
+  const f = state.find;
+  const n = state.tutors.filter(matches).length;
+  return `
+    <div class="find-head">
+      <div>
+        <div class="eyebrow">Your next study buddy</div>
+        <h1 class="page-title">Meet student tutors</h1>
+      </div>
+      <div class="muted" style="font-size:1.3rem" id="count">${state.tutors.length} tutors</div>
+    </div>
+    <div class="searchbar">
+      <input class="grow" data-find="subject" list="subjects" value="${esc(f.subject)}" placeholder="Search a subject (e.g. Biology, Math)">
+      <datalist id="subjects">${allCourses().map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+      <select data-find="day" aria-label="Day">
+        <option value="">Any day</option>
+        ${DAYS.map(d => `<option value="${d}" ${f.day === d ? 'selected' : ''}>${DAY_FULL[d]}</option>`).join('')}
+      </select>
+      <input type="time" data-find="time" value="${esc(f.time)}" aria-label="Time">
+      <button class="btn" data-action="search">Search tutors</button>
+    </div>
+    <div class="muted" id="found">${n} profile(s) found.</div>
+    <div class="grid" id="results">${resultsHtml()}</div>`;
+}
+
+/* ---- FR-3: Tutor profile ---- */
+function pageProfile() {
+  const t = getTutor(state.profileId);
+  const day = state.profileDay;
+  const daySlots = sortSlots(t.slots.filter(s => s.day === day));
+  const revs = tutorReviews(t.id);
+  const mine = t.id === state.myTutorId;
+  return `
+    <button class="btn dark sm back" data-action="go" data-page="find">← Back to tutors</button>
+    <div class="profile">
+      <div class="pside">
+        <div class="top">
+          <div class="avatar-lg">${esc(initials(t.name))}</div>
+          <div class="name">${esc(t.name)}</div>
+        </div>
+        <div class="bottom">
+          <div class="rating">${starsHtml(avg(t.id))}</div>
+          <button class="linkbtn" data-action="scrollTo" data-target="reviews">See Reviews${revs.length ? ` (${revs.length})` : ''}</button><br>
+          ${mine ? '<div class="muted" style="margin-top:22px">This is your profile</div>'
+                 : `<button class="btn" data-action="openRequestModal" data-id="${t.id}">Send Request</button>`}
+        </div>
+      </div>
+      <div class="pmain">
+        <div><span class="k">Availability : </span>${t.slots.length ? '<span class="avail-on">Available</span>' : '<span class="avail-off">Not available</span>'}</div>
+        <div class="k" style="margin-top:24px">Courses :</div>
+        <ul>${t.courses.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
+        <div class="tabs">
+          ${DAYS.map(d => {
+            const has = t.slots.some(s => s.day === d);
+            return `<button class="tab ${has ? '' : 'dim'} ${d === day ? 'active' : ''}" data-action="pickDay" data-day="${d}">${DAY_FULL[d]}</button>`;
+          }).join('')}
+        </div>
+        <div class="slots">${daySlots.length
+          ? daySlots.map(s => `<span class="slot">${s.start} – ${s.end}</span>`).join('')
+          : `<span class="muted">Not available on ${DAY_FULL[day]}.</span>`}</div>
+        <div class="desc-title">Description</div>
+        <p class="desc">${esc(t.bio)}</p>
+      </div>
+    </div>
+    <div class="reviews" id="reviews">
+      <h2>Reviews (${revs.length})</h2>
+      ${revs.length ? revs.map(r => `
+        <div class="review">
+          <span class="rating">${starsHtml(r.rating)}</span> <b>${esc(r.author)}</b> <span class="muted">· ${esc(r.course)}</span>
+          <div>${esc(r.comment)}</div>
+        </div>`).join('') : '<p class="muted">No reviews yet.</p>'}
+    </div>`;
+}
+
+/* ---- FR-4 (sent) and FR-5: My requests ---- */
+function pageRequests() {
+  const mine = state.requests.filter(r => r.mine).slice().reverse();
+  const cards = mine.map(r => {
+    const t = getTutor(r.tutorId);
+    let foot = '';
+    if (r.status === 'pending') foot = '<p class="muted" style="margin:14px 0 0">Waiting for the tutor to respond. Open the Tutor dashboard and view requests as this tutor to accept it.</p>';
+    if (r.status === 'completed' && !r.reviewed)
+      foot = `<div class="actions"><button class="btn sm" data-action="openReviewModal" data-id="${r.id}">Leave a review</button></div>`;
+    if (r.reviewed) foot = '<p class="muted" style="margin:14px 0 0">✓ You reviewed this session.</p>';
+    return `
+      <div class="rcard">
+        <div class="rhead">
+          <div><h3>${esc(t.name)}</h3><div class="meta">${esc(r.subject)} · ${slotText(r.slot)}</div>
+            <div class="meta">${esc(r.mode)}${r.location ? ' · ' + esc(r.location) : ''}</div></div>
+          <span class="pill ${r.status}">${r.status}</span>
+        </div>${foot}
+      </div>`;
+  }).join('');
+  return `
+    <div class="eyebrow">Your sessions</div>
+    <h1 class="page-title">My requests</h1>
+    <p class="muted" style="font-size:1.1rem">Requests you've sent. Once a session is completed you can review the tutor.</p>
+    <div class="stack">${cards || '<div class="empty">You haven\'t sent any requests yet. Find a tutor to get started.</div>'}</div>`;
+}
+
+/* ---- FR-1 (summary) and FR-4 (received): Tutor dashboard ---- */
+function pageDash() {
+  const me = state.myTutorId ? getTutor(state.myTutorId) : null;
+  const viewing = getTutor(state.dashTutor);
+  const incoming = state.requests.filter(r => r.tutorId === viewing.id).slice().reverse();
+  const summary = me ? `
+      <div class="rcard">
+        <div class="prof-sum">
+          <div class="avatar-sq">${esc(initials(me.name))}</div>
+          <div style="flex:1 1 240px">
+            <h3 style="font-size:1.4rem">${esc(me.name)}</h3>
+            <div class="muted">Tutor account</div>
+            <div class="chips">${me.courses.map(c => `<span class="chip">${esc(c)}</span>`).join('')}</div>
+            <div class="chips">${sortSlots(me.slots).map(s => `<span class="chip g">${slotText(s)}</span>`).join('')}</div>
+          </div>
+          <button class="btn sm dark" data-action="viewTutor" data-id="${me.id}">View public profile</button>
+        </div>
+      </div>` : `
+      <div class="rcard">
+        <div class="rhead"><div><h3>You don't have a tutor profile yet</h3>
+          <div class="meta">List the courses you teach and when you're free so students can find you.</div></div>
+          <button class="btn" data-action="openTutorModal">Create tutor profile ↗</button></div>
+      </div>`;
+  const cards = incoming.map(r => {
+    let actions = '';
+    if (r.status === 'pending') actions = `<div class="actions">
+      <button class="btn sm" data-action="setStatus" data-id="${r.id}" data-status="accepted">Accept</button>
+      <button class="btn sm danger" data-action="setStatus" data-id="${r.id}" data-status="declined">Decline</button></div>`;
+    if (r.status === 'accepted') actions = `<div class="actions">
+      <button class="btn sm" data-action="setStatus" data-id="${r.id}" data-status="completed">Mark session completed</button></div>`;
+    return `
+      <div class="rcard">
+        <div class="rhead">
+          <div><h3>${esc(r.student)}</h3><div class="meta">${esc(r.subject)} · ${slotText(r.slot)}</div>
+            <div class="meta">${esc(r.mode)}${r.location ? ' · ' + esc(r.location) : ''}</div></div>
+          <span class="pill ${r.status}">${r.status}</span>
+        </div>${actions}
+      </div>`;
+  }).join('');
+  return `
+    <div class="eyebrow">For tutors</div>
+    <h1 class="page-title">Tutor dashboard</h1>
+    <div class="stack">${summary}</div>
+    <div class="sectionhead">
+      <h2>Incoming requests</h2>
+      <div class="viewing">Demo: view requests as
+        <select id="dashAs">${state.tutors.map(t => `<option value="${t.id}" ${t.id === viewing.id ? 'selected' : ''}>${esc(t.name)}${t.id === state.myTutorId ? ' (you)' : ''}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="stack">${cards || '<div class="empty">No requests yet.</div>'}</div>`;
+}
+
+/* ======================= Modals ======================= */
+function renderModal() {
+  const m = state.modal;
+  const overlay = $('#overlay');
+  if (!m) { overlay.classList.remove('open'); $('#modal').innerHTML = ''; return; }
+  overlay.classList.add('open');
+  $('#modal').innerHTML = ({ tutor: modalTutor, request: modalRequest, review: modalReview })[m.type](m);
+}
+function head(title, sub) {
+  return `<div class="modal-head"><h2>${title}</h2><button class="x" data-action="closeModal" aria-label="Close">×</button></div><p class="msub">${sub}</p>`;
+}
+
+/* FR-1: become a tutor */
+function modalTutor(m) {
+  return `
+    ${head('Become a tutor', 'Start building your student tutor profile.')}
+    <label>Your name</label>
+    <input data-m="name" value="${esc(m.name)}" placeholder="Full name">
+    <label>Courses you can teach</label>
+    <input data-m="courses" value="${esc(m.courses)}" placeholder="e.g. Calculus, Algebra">
+    <label>Available times</label>
+    <div class="row">
+      <select data-m="slotDay">${DAYS.map(d => `<option value="${d}" ${m.slotDay === d ? 'selected' : ''}>${DAY_FULL[d]}</option>`).join('')}</select>
+      <input type="time" data-m="slotStart" value="${m.slotStart}">
+      <input type="time" data-m="slotEnd" value="${m.slotEnd}">
+      <button class="btn sm dark" data-action="addSlot">+ Add</button>
+    </div>
+    <div class="chips">${m.slots.length
+      ? m.slots.map((s, i) => `<span class="chip g">${slotText(s)}<button data-action="removeSlot" data-index="${i}" aria-label="Remove">×</button></span>`).join('')
+      : '<span class="muted" style="margin-left:6px">No times added yet.</span>'}</div>
+    <label>About you (optional)</label>
+    <textarea data-m="bio" placeholder="Tell students how you like to teach">${esc(m.bio)}</textarea>
+    <button class="btn block" data-action="saveTutor">Create tutor profile</button>`;
+}
+
+/* FR-4: request a session */
+function modalRequest(m) {
+  const t = getTutor(m.tutorId);
+  return `
+    ${head('Request a session', `Send a tutoring request to ${esc(t.name)}.`)}
+    <label>Your name</label>
+    <input data-m="name" value="${esc(m.name)}" placeholder="Full name or nickname">
+    <label>Subject</label>
+    <input data-m="subject" list="tcourses" value="${esc(m.subject)}" placeholder="What do you need help with?">
+    <datalist id="tcourses">${t.courses.map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+    <label>Preferred date and time</label>
+    <select data-m="slotIndex">${sortSlots(t.slots).map((s, i) => `<option value="${i}" ${Number(m.slotIndex) === i ? 'selected' : ''}>${slotText(s)}</option>`).join('')}</select>
+    <label>Session type</label>
+    <select data-m="mode">
+      <option ${m.mode === 'Online' ? 'selected' : ''}>Online</option>
+      <option ${m.mode === 'In-person' ? 'selected' : ''}>In-person</option>
+    </select>
+    <label>Location</label>
+    <input data-m="location" value="${esc(m.location)}" placeholder="e.g. your room, tutor's room, library..">
+    <button class="btn block" data-action="sendRequest">Send Request</button>`;
+}
+
+/* FR-5: leave a review */
+function modalReview(m) {
+  const r = state.requests.find(x => x.id === m.reqId);
+  const t = getTutor(r.tutorId);
+  return `
+    ${head('Leave a review', `How was your ${esc(r.subject)} session with ${esc(t.name)}?`)}
+    <label>Rating</label>
+    <div class="starpick">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= m.rating ? 'on' : ''}" data-action="setStar" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}">★</button>`).join('')}</div>
+    <label>Comment</label>
+    <textarea data-m="comment" placeholder="What went well?">${esc(m.comment)}</textarea>
+    <button class="btn block" data-action="submitReview">Submit review</button>`;
+}
+
+/* ======================= Actions ======================= */
+function openTutorModal() {
+  state.modal = { type: 'tutor', name: state.userName, courses: '', bio: '', slots: [], slotDay: 'Mon', slotStart: '16:00', slotEnd: '18:00' };
+  renderModal();
+}
+function addSlot() {
+  const m = state.modal;
+  if (!m.slotStart || !m.slotEnd || m.slotStart >= m.slotEnd) return toast('End time must be after start time');
+  m.slots.push({ day: m.slotDay, start: m.slotStart, end: m.slotEnd });
+  renderModal();
+}
+function saveTutor() {
+  const m = state.modal;
+  const courses = [...new Set(m.courses.split(',').map(s => s.trim()).filter(Boolean))];
+  if (!m.name.trim()) return toast('Please enter your name');
+  if (!courses.length) return toast('Add at least one course, separated by commas');
+  if (!m.slots.length) return toast('Add at least one available time');
+  const id = 't' + state.nextId++;
+  state.tutors.push({ id, name: m.name.trim(), bio: m.bio.trim() || 'No description yet.', courses, slots: m.slots.slice() });
+  state.myTutorId = id;
+  state.dashTutor = id;
+  state.userName = m.name.trim();
+  state.modal = null;
+  state.page = 'dash';
+  toast('Your tutor profile is live. Students can now find you.');
+  render();
+}
+function openRequestModal(id) {
+  state.modal = { type: 'request', tutorId: id, name: state.userName, subject: getTutor(id).courses[0], slotIndex: 0, mode: 'Online', location: '' };
+  renderModal();
+}
+function sendRequest() {
+  const m = state.modal;
+  if (!m.name.trim()) return toast('Please enter your name');
+  if (!m.subject.trim()) return toast('Tell the tutor what you need help with');
+  const t = getTutor(m.tutorId);
+  const slot = sortSlots(t.slots)[Number(m.slotIndex)];
+  state.requests.push({
+    id: 'r' + state.nextId++, tutorId: t.id, student: m.name.trim(), subject: m.subject.trim(),
+    slot: { ...slot }, mode: m.mode, location: m.location.trim(), message: '', status: 'pending', reviewed: false, mine: true
+  });
+  state.userName = m.name.trim();
+  state.dashTutor = t.id;
+  state.modal = null;
+  state.page = 'requests';
+  toast('Request sent to ' + t.name);
+  render();
+}
+function setStatus(id, status) {
+  state.requests.find(r => r.id === id).status = status;
+  toast(status === 'completed' ? 'Session completed. The student can now leave a review.' : 'Request ' + status);
+  render();
+}
+function openReviewModal(id) {
+  state.modal = { type: 'review', reqId: id, rating: 5, comment: '' };
+  renderModal();
+}
+function submitReview() {
+  const m = state.modal;
+  const r = state.requests.find(x => x.id === m.reqId);
+  state.reviews.push({
+    id: 'v' + state.nextId++, tutorId: r.tutorId, author: r.student, course: r.subject,
+    rating: m.rating, comment: m.comment.trim() || '(no comment)'
+  });
+  r.reviewed = true;
+  state.modal = null;
+  toast('Thanks! Your review is now on the tutor\'s profile.');
+  render();
+}
+function viewTutor(id, scroll) {
+  const t = getTutor(id);
+  state.profileId = id;
+  state.profileDay = (sortSlots(t.slots)[0] || { day: 'Mon' }).day;
+  go('profile', scroll);
+}
+
+/* ======================= Render & routing ======================= */
+function render() {
+  renderHeader();
+  const pages = { home: pageHome, find: pageFind, profile: pageProfile, requests: pageRequests, dash: pageDash };
+  $('#app').innerHTML = pages[state.page]();
+  renderModal();
+}
+function go(page, scroll) {
+  state.page = page;
+  render();
+  const target = scroll && document.getElementById(scroll);
+  if (target && target.scrollIntoView) target.scrollIntoView({ block: 'start' });
+  else window.scrollTo(0, 0);
+}
+
+/* ======================= Events ======================= */
+document.addEventListener('click', e => {
+  if (e.target.id === 'overlay') { state.modal = null; renderModal(); return; }
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const d = el.dataset;
+  switch (d.action) {
+    case 'go': go(d.page, d.scroll); break;
+    case 'viewTutor': viewTutor(d.id, d.scroll); break;
+    case 'search': updateResults(); break;
+    case 'pickDay': state.profileDay = d.day; render(); break;
+    case 'scrollTo': document.getElementById(d.target).scrollIntoView({ block: 'start' }); break;
+    case 'openTutorModal': openTutorModal(); break;
+    case 'openRequestModal': openRequestModal(d.id); break;
+    case 'openReviewModal': openReviewModal(d.id); break;
+    case 'closeModal': state.modal = null; renderModal(); break;
+    case 'addSlot': addSlot(); break;
+    case 'removeSlot': state.modal.slots.splice(Number(d.index), 1); renderModal(); break;
+    case 'saveTutor': saveTutor(); break;
+    case 'sendRequest': sendRequest(); break;
+    case 'setStar': state.modal.rating = Number(d.n); renderModal(); break;
+    case 'submitReview': submitReview(); break;
+    case 'setStatus': setStatus(d.id, d.status); break;
+  }
+});
+function onField(e) {
+  const t = e.target;
+  if (t.dataset.find !== undefined) { state.find[t.dataset.find] = t.value; updateResults(); }
+  else if (t.dataset.m !== undefined && state.modal) state.modal[t.dataset.m] = t.value;
+  else if (t.id === 'dashAs') { state.dashTutor = t.value; render(); }
+}
+document.addEventListener('input', onField);
+document.addEventListener('change', onField);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && state.modal) { state.modal = null; renderModal(); }
+  if (e.key === 'Enter' && e.target.dataset && e.target.dataset.find !== undefined) updateResults();
+});
+
+render();
+</script>
+</body>
+</html>
