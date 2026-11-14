@@ -3,12 +3,13 @@
 Students can sign up/log in on this website and create a tutor profile with the courses they can teach and what time they're available.
 Other students can find tutors by searching for what courses they need to be tutored and they will be able to send a request to a tutor and set up
 a tutoring session whether online or in-person.</p>
-## Members
+## **Members**
 <p>
   Kyaw Zin Lin 6931503008 <br>
   Kongpop Wechvitan (kiranaa1968-blip) 6931503021 <br>
   Kasidate Krongsawatkul 6931503100 <br>
 </p>
+
 ## Features
 <p>
 - Tutor profile creation with what <br>
@@ -19,9 +20,7 @@ courses they can tutor and when they're available <br>
 - Leave review for fellow students <br>
 </p>
 
-## Link to the prototype
+## Prototype
 <p>
-  This is the link to the FindTutor prototype. <br>
-  Interactable buttons will highlighted when you click outside the interactable buttons. <br>
-  https://www.figma.com/proto/Vlrcc2jsmar1VDT6aEywBo/FindTutor---Prototype?node-id=8-2&p=f&t=rfUrOnghULXVuYHh-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=8%3A2 <br>
+  T
 </p>
