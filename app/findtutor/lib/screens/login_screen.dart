@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 
-/// หน้าสำหรับเข้าสู่ระบบของผู้ใช้
+/// Login page for user
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -11,7 +11,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  /// ใช้รับข้อมูลอีเมลและรหัสจากผู้ใช้
+  /// Email and password information from the user.
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String email = emailController.text;
     String password = passwordController.text;
 
-    /// ตรวจสอบว่าผู้ใช้กรอกข้อมูลครบหรือไม่
+    /// Check if the user has provided all the required information.
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      /// กลับไปยังหน้า HomeScreen
+      /// Go back to HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -57,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      /// ชื่อหน้าบนแถบด้านบน
       appBar: AppBar(
         title: const Text('Login'),
       ),
@@ -65,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20),
 
-        /// จัดองค์ประกอบในแนวตั้ง
+        /// Column Alignment
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -79,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 25),
 
-            /// ช่องกรอกอีเมล และ รหัสผ่าน
+            /// Input email and password
             TextField(
               controller: emailController,
               decoration: const InputDecoration(
@@ -92,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: passwordController,
 
-              /// ซ่อนข้อความรหัสผ่านขณะพิมพ์
+              /// Hide password characters while typing
               obscureText: true,
 
               decoration: const InputDecoration(
@@ -103,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 20),
 
-            /// ปุ่มเข้าสู่ระบบ
+            /// Login Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
