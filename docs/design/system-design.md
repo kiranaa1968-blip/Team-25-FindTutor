@@ -1,4 +1,4 @@
-# 02 - System Design
+# System Design
 
 ## 1. System Architecture
 
