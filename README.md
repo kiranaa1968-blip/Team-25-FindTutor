@@ -23,5 +23,7 @@ courses they can tutor and when they're available <br>
 
 ## Prototype
 <p>
-  T
+  You can access the prototype by downloading index.html in the /prototype folder or <br>
+  you can access it by clicking link here: <br>
+  https://kiranaa1968-blip.github.io/Team-25-FindTutor/ <br>
 </p>
