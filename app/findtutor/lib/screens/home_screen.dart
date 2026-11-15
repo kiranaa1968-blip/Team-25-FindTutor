@@ -3,23 +3,21 @@ import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'tutor_search_screen.dart';
 
-/// หน้าหลักของแอปพลิเคชัน FindTutor
+/// FindTutor Application Home Page
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  /// สร้างหน้าตาและองค์ประกอบต่าง ๆ ของหน้าแรก
+  /// Design the layout and various elements of the homepage
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// แถบด้านบนของแอป
       appBar: AppBar(
         title: const Text('FindTutor'),
 
-        /// ปุ่มเข้าสู่ระบบ
+        /// Login
         actions: [
           TextButton(
             onPressed: () {
-              /// เปิดหน้า LoginScreen
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -32,16 +30,13 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
 
-      /// เนื้อหาหลักของหน้าแรก
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
 
-          /// จัดเรียงองค์ประกอบในแนวตั้ง
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /// ไอคอนสื่อถึงการศึกษา
               const Icon(
                 Icons.school,
                 size: 80,
@@ -50,7 +45,6 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              /// ข้อความหลักของเว็บไซต์
               const Text(
                 'Learn from each other',
                 style: TextStyle(
@@ -62,7 +56,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              /// คำอธิบายสั้น ๆ ของ FindTutor
+              /// A description of FindTutor
               const Text(
                 'Find your people. Learn anything.',
                 style: TextStyle(fontSize: 16),
@@ -70,12 +64,12 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              /// ปุ่มสำหรับค้นหาติวเตอร์
+              /// Find Tutor Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    /// เปิดหน้าค้นหาติวเตอร์
+                    /// Search
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -90,12 +84,11 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              /// ปุ่มเข้าสู่ระบบเพื่อใช้งานหรือสมัครเป็นติวเตอร์
+              /// Login as tutor
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    /// เปิดหน้าเข้าสู่ระบบ
                     Navigator.push(
                       context,
                       MaterialPageRoute(
