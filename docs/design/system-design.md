@@ -9,7 +9,6 @@ The system is organized into:
 
 - Frontend: Flutter and Dart
 - Database: SQLite
-- UI Components: Flutter Widgets
 - Data Management: AppDatabase
 
 ## 2. Frontend
@@ -40,7 +39,6 @@ Main tables:
 - models/: Stores data models.
 - screens/: Contains application screens.
 - database/: Handles database operations.
-- widgets/: Contains reusable UI components.
 
 ## 5. Technology Stack
 
